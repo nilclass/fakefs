@@ -1,3 +1,5 @@
+require 'stringio'
+
 module FakeFS
   class File < StringIO
     PATH_SEPARATOR = '/'
@@ -172,13 +174,18 @@ module FakeFS
       File::Stat.new(file)
     end
 
+    def self.lstat(file)
+      File::Stat.new(file, true)
+    end
+
     class Stat
-      def initialize(file)
+      def initialize(file, __lstat = false)
         if !File.exists?(file)
           raise(Errno::ENOENT, "No such file or directory - #{file}")
         end
 
-        @file = file
+        @file    = file
+        @__lstat = __lstat
       end
 
       def symlink?
@@ -194,7 +201,11 @@ module FakeFS
       end
 
       def size
-        File.size(@file)
+        if @__lstat && symlink?
+          FileSystem.find(@file).target.size
+        else
+          File.size(@file)
+        end
       end
     end
 
@@ -216,7 +227,9 @@ module FakeFS
       true
     end
 
-    alias_method :tell=, :pos=
+    alias_method :tell=,    :pos=
+    alias_method :sysread,  :read
+    alias_method :syswrite, :write
 
     undef_method :closed_read?
     undef_method :closed_write?
@@ -234,11 +247,16 @@ module FakeFS
     end
 
     def stat
-      raise NotImplementedError
+      self.class.stat(@path)
     end
 
-    def sysseek(offset, whence = SEEK_SET)
-      raise NotImplementedError
+    def lstat
+      self.class.lstat(@path)
+    end
+
+    def sysseek(position, whence = SEEK_SET)
+      seek(position, whence)
+      pos
     end
 
     alias_method :to_i, :fileno
@@ -272,10 +290,6 @@ module FakeFS
     end
 
     def flock(locking_constant)
-      raise NotImplementedError
-    end
-
-    def lstat
       raise NotImplementedError
     end
 
