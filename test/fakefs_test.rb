@@ -1222,13 +1222,22 @@ class FakeFSTest < Test::Unit::TestCase
     assert File.directory?("/bar")
   end
 
-  def test_rename_with_file_and_directory_raises_error
-    Dir.mkdir("/foo")
-    FileUtils.touch("/bar")
+  def test_rename_file_to_directory_raises_error
+    FileUtils.touch("/foo")
+    Dir.mkdir("/bar")
     assert_raises(Errno::EISDIR) do
       File.rename("/foo", "/bar")
     end
   end
+
+  def test_rename_directory_to_file_raises_error
+    Dir.mkdir("/foo")
+    FileUtils.touch("/bar")
+    assert_raises(Errno::ENOTDIR) do
+      File.rename("/foo", "/bar")
+    end
+  end
+
 
   def test_rename_with_missing_source_raises_error
     assert_raises(Errno::ENOENT) do
