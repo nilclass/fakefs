@@ -148,8 +148,6 @@ module FakeFS
       else
         raise Errno::ENOENT,  "No such file or directory - #{source} or #{dest}"
       end
-
-      0
     end
 
     def self.link(source, dest)

@@ -1196,11 +1196,6 @@ class FakeFSTest < Test::Unit::TestCase
     assert File.file?("/bar")
   end
 
-  def test_rename_returns
-    FileUtils.touch("/foo")
-    assert_equal 0, File.rename("/foo", "/bar")
-  end
-
   def test_rename_renames_two_files
     FileUtils.touch("/foo")
     FileUtils.touch("/bar")
