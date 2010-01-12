@@ -137,6 +137,19 @@ module FakeFS
       read(path).split("\n")
     end
 
+    def self.rename(source, dest)
+      if directory?(source) ^ directory?(dest)
+        raise Errno::EISDIR, "Is a directory - #{source} or #{dest}"
+      end
+
+      if target = FileSystem.find(source)
+        FileSystem.add(dest, target.entry.clone)
+        FileSystem.delete(source)
+      else
+        raise Errno::ENOENT,  "No such file or directory - #{source} or #{dest}"
+      end
+    end
+
     def self.link(source, dest)
       if directory?(source)
         raise Errno::EPERM, "Operation not permitted - #{source} or #{dest}"

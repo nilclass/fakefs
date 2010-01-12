@@ -1190,6 +1190,47 @@ class FakeFSTest < Test::Unit::TestCase
     assert Dir.tmpdir == "/tmp"
   end
 
+  def test_rename_renames_a_file
+    FileUtils.touch("/foo")
+    File.rename("/foo", "/bar")
+    assert File.file?("/bar")
+  end
+
+  def test_rename_renames_two_files
+    FileUtils.touch("/foo")
+    FileUtils.touch("/bar")
+    File.rename("/foo", "/bar")
+    assert File.file?("/bar")
+
+  end
+
+  def test_rename_renames_two_directories
+    Dir.mkdir("/foo")
+    File.rename("/foo", "/bar")
+    assert File.directory?("/bar")
+  end
+
+  def test_rename_renames_two_directories
+    Dir.mkdir("/foo")
+    Dir.mkdir("/bar")
+    File.rename("/foo", "/bar")
+    assert File.directory?("/bar")
+  end
+
+  def test_rename_with_file_and_directory_raises_error
+    Dir.mkdir("/foo")
+    FileUtils.touch("/bar")
+    assert_raises(Errno::EISDIR) do
+      File.rename("/foo", "/bar")
+    end
+  end
+
+  def test_rename_with_missing_source_raises_error
+    assert_raises(Errno::ENOENT) do
+      File.rename("/no_such_file", "/bar")
+    end
+  end
+
   def test_hard_link_creates_file
     FileUtils.touch("/foo")
 
