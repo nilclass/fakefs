@@ -138,9 +138,7 @@ module FakeFS
     end
 
     def self.rename(source, dest)
-      if directory?(source) && !directory?(dest)
-        raise Errno::ENOTDIR, "Not a directory - #{source} or #{dest}"
-      elsif !directory?(source) && directory?(dest)
+      if directory?(source) ^ directory?(dest)
         raise Errno::EISDIR, "Is a directory - #{source} or #{dest}"
       end
 
