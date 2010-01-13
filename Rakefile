@@ -25,15 +25,16 @@ begin
   require 'fakefs/version'
 
   Jeweler::Tasks.new do |gemspec|
-    gemspec.name        = "fakefs"
-    gemspec.summary     = "A fake filesystem. Use it in your tests."
+    gemspec.name        = "ktheory-fakefs"
+    gemspec.summary     = "A fake filesystem. Use it in your tests. (ktheory's patches)"
     gemspec.email       = "chris@ozmm.org"
-    gemspec.homepage    = "http://github.com/defunkt/fakefs"
-    gemspec.description = "A fake filesystem. Use it in your tests."
-    gemspec.authors     = ["Chris Wanstrath"]
+    gemspec.homepage    = "http://github.com/ktheory/fakefs"
+    gemspec.description = "ktheory's patches to fakefs"
+    gemspec.authors     = ["Chris Wanstrath", "Aaron Suggs"]
     gemspec.has_rdoc    = false
     gemspec.version     = FakeFS::Version.to_s
   end
+  Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler not available."
   puts "Install it with: gem install jeweler"
