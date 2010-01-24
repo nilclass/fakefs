@@ -190,6 +190,12 @@ module FakeFS
       additional_file_names.size + 1
     end
 
+    def self.chmod(mode, *files)
+      # if the last parameter isn't a string it enables verbose mode
+      files.pop unless files.last.kind_of?(String)
+      files.each { |f| f.chmod(mode) }
+    end
+
     class << self
       alias_method :unlink, :delete
     end
